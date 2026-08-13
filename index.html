@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Days of Us ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            min-height: 100vh;
+            color: #4a4a4a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+
+        /* Password Lock Screen Overlay */
+        .lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .lock-card {
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 380px;
+            width: 90%;
+        }
+
+        .lock-card h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .lock-card p {
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .pass-input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-msg {
+            color: #721c24;
+            background: rgba(248, 215, 218, 0.8);
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .container {
+            max-width: 850px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #d63384;
+            margin-bottom: 15px;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .counter {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #e63946;
+            margin: 15px 0;
+        }
+
+        /* Timeline Section */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .milestone {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #ff4b2b;
+        }
+
+        .milestone h3 {
+            color: #d63384;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 75, 43, 0.5);
+        }
+
+        .secret-message {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            font-style: italic;
+            color: #2b2d42;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        /* Photo Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            aspect-ratio: 1 / 1;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            opacity: 1;
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+            object-fit: contain;
+        }
+
+        .lightbox-text {
+            color: #ffffff;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Floating Music Player Controls */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            padding: 10px 18px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            z-index: 900;
+            transition: transform 0.3s ease;
+        }
+
+        .music-player:hover {
+            transform: translateY(-3px);
+        }
+
+        .music-disc {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #333 40%, #ff4b2b 45%, #111 50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .music-disc.playing {
+            animation: spin 3s linear infinite;
+        }
+
+        .music-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .music-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #d63384;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-status {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+
+        .music-btn {
+            background: #ff4b2b;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(255, 75, 43, 0.4);
+            transition: background 0.2s;
+        }
+
+        .music-btn:hover {
+            background: #ff416c;
+        }
+
+        .volume-slider {
+            width: 60px;
+            accent-color: #ff4b2b;
+            cursor: pointer;
+        }
+
+        /* Floating Hearts Animation */
+        .heart {
+            position: fixed;
+            font-size: 24px;
+            user-select: none;
+            pointer-events: none;
+            animation: floatUp 4s linear forwards;
+            z-index: 999;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .music-player {
+                bottom: 15px;
+                right: 15px;
+                padding: 8px 14px;
+            }
+            .volume-slider {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Lock Screen Entry Gate -->
+    <div id="lockScreen" class="lock-screen">
+        <div class="lock-card">
+            <h2>Secret Surprise 🔒</h2>
+            <p>Enter our secret passcode to unlock your 100-day gift:</p>
+            <div id="errorMsg" class="error-msg">Incorrect passcode! Try again ❤️</div>
+            <input type="password" id="passInput" class="pass-input" placeholder="Passcode (Hint: 100days)" onkeypress="handleKeyPress(event)">
+            <button class="btn" onclick="unlockSite()">Unlock ❤️</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="card">
+            <h1>Happy 100 Days! ❤️</h1>
+            <p class="subtitle">Every single day with you has been my favorite adventure.</p>
+            <div class="counter">100 Days</div>
+            <p>...and a lifetime to go.</p>
+            <button class="btn" onclick="createHearts(); toggleSecret()">Click for a Surprise ✨</button>
+            <div id="secret" class="secret-message">
+                "Thank you for bringing so much warmth, laughter, and light into my world. Happy 100-day milestone!"
+            </div>
+        </div>
+
+        <!-- Interactive Photo Gallery -->
+        <div class="card">
+            <h2>Our Favorite Moments 📷</h2>
+            <p style="font-size: 0.9rem; color: #6c757d; margin-bottom: 15px;">Click on any photo to view full size!</p>
+            
+            <div class="gallery-grid">
+                <!-- Photo 1 -->
+                <div class="gallery-item" onclick="openLightbox('https://raw.githubusercontent.com/nikhilkurle40/100DaysAnniversay/refs/heads/main/1.jpg', 'Our very first Unofficial date ❤️')">
+                    <img src="https://raw.githubusercontent.com/nikhilkurle40/100DaysAnniversay/refs/heads/main/1.jpg" alt="Memory 1">
+                    <div class="gallery-caption">Our very first Unofficial date ❤️</div>
+                </div>
+
+                <!-- Photo 2 -->
+                <div class="gallery-item" onclick="openLightbox('https://raw.githubusercontent.com/nikhilkurle40/100DaysAnniversay/refs/heads/main/2.jpg', 'First Weekend getaway✨')">
+                    <img src="https://raw.githubusercontent.com/nikhilkurle40/100DaysAnniversay/refs/heads/main/2.jpg" alt="Memory 2">
+                    <div class="gallery-caption">First Weekend getaway ✨</div>
+                </div>
+
+                <!-- Photo 3 -->
+                <div class="gallery-item" onclick="openLightbox('https://raw.githubusercontent.com/nikhilkurle40/100DaysAnniversay/refs/heads/main/3.jpg', 'Small Meetups 🌅')">
+                    <img src="https://raw.githubusercontent.com/nikhilkurle40/100DaysAnniversay/refs/heads/main/3.jpg" alt="Memory 3">
+                    <div class="gallery-caption">Small Meetups 🌅</div>
+                </div>
+
+                <!-- Photo 4 -->
+                <div class="gallery-item" onclick="openLightbox('https://github.com/nikhilkurle40/100DaysAnniversay/blob/main/4.jpg', 'Our Future memories 🌸')">
+                    <img src="https://github.com/nikhilkurle40/100DaysAnniversay/blob/main/4.jpg" alt="Memory 4">
+                    <div class="gallery-caption">Our Future memories 🌸</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Milestones Section -->
+        <div class="card">
+            <h2>Our Journey So Far 📖</h2>
+            <div class="timeline">
+                <div class="milestone">
+                    <h3>Day 1 — The Spark</h3>
+                    <p>Where it all started. The day we decided to officially begin this journey.</p>
+                </div>
+                <div class="milestone">
+                    <h3>Day 50 — The Memories</h3>
+                    <p>Halfway to a hundred, filled with endless late-night chats and shared laughs.</p>
+                </div>
+                <div class="milestone">
+                    <h3>Day 100 — Right Now</h3>
+                    <p>Celebrating us today and looking forward to every moment ahead.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal Container -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img" class="lightbox-content" src="" alt="Popup Image">
+        <div id="lightbox-caption" class="lightbox-text"></div>
+    </div>
+
+    <!-- Floating Soft Music Player Controls -->
+    <div class="music-player">
+        <div class="music-disc" id="musicDisc">🎵</div>
+        <div class="music-info">
+            <span class="music-title">Our Theme Song</span>
+            <span class="music-status" id="musicStatus">Paused</span>
+        </div>
+        <button class="music-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
+
+        <audio id="bgMusic" loop preload="auto">
+            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112199.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // Set Secret Password Here (Change "100days" to your anniversary date or special word!)
+        const SECRET_PASSWORD = "100daysILoveyouRiya";
+
+        function unlockSite() {
+            const enteredPass = document.getElementById('passInput').value;
+            const lockScreen = document.getElementById('lockScreen');
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (enteredPass.trim().toLowerCase() === SECRET_PASSWORD.toLowerCase()) {
+                errorMsg.style.display = 'none';
+                lockScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    lockScreen.style.visibility = 'hidden';
+                    createHearts();
+                    toggleAudio(); // Autoplays music smoothly upon successful unlock action
+                }, 800);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                unlockSite();
+            }
+        }
+
+        // Music Player Scripting
+        const audio = document.getElementById('bgMusic');
+        const playBtn = document.getElementById('playBtn');
+        const musicDisc = document.getElementById('musicDisc');
+        const musicStatus = document.getElementById('musicStatus');
+
+        audio.volume = 0.5;
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playBtn.innerText = '⏸';
+                    musicStatus.innerText = 'Playing...';
+                    musicDisc.classList.add('playing');
+                }).catch(err => console.log("Audio play deferred:", err));
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶';
+                musicStatus.innerText = 'Paused';
+                musicDisc.classList.remove('playing');
+            }
+        }
+
+        function changeVolume(val) {
+            audio.volume = val;
+        }
+
+        // Toggle Secret Message
+        function toggleSecret() {
+            const secret = document.getElementById('secret');
+            secret.style.display = secret.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Generate Floating Hearts
+        function createHearts() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerText = ['❤️', '💖', '✨', '🌸', '💕'][Math.floor(Math.random() * 5)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.bottom = '0px';
+                    heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                    document.body.appendChild(heart);
+
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 4000);
+                }, i * 150);
+            }
+        }
+
+        // Lightbox Functions
+        function openLightbox(imgSrc, captionText) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCaption = document.getElementById('lightbox-caption');
+
+            lightboxImg.src = imgSrc;
+            lightboxCaption.innerText = captionText;
+            lightbox.style.display = 'flex';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
